@@ -6,10 +6,12 @@ import Container from '../ui/Container'
 import logoMark from '../../assets/logo-mark.png'
 
 const navLinks = [
+  { name: 'Home', to: '/' },
   { name: 'Work', to: '/projects' },
   { name: 'Services', to: '/services' },
   { name: 'About', to: '/about' },
   { name: 'Team', to: '/team' },
+  { name: 'Contact', to: '/contact' },
 ]
 
 export default function Navbar() {
@@ -23,30 +25,51 @@ export default function Navbar() {
   }, [])
 
   const linkClass = ({ isActive }) =>
-    `text-sm transition-colors duration-300 ${isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'}`
+    `text-sm transition-colors duration-300 ${
+      isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'
+    }`
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? 'bg-bg/90 backdrop-blur-xl border-b border-line' : 'bg-bg/50 backdrop-blur-md border-b border-transparent'
+        scrolled
+          ? 'bg-bg/90 backdrop-blur-xl border-b border-line'
+          : 'bg-bg/50 backdrop-blur-md border-b border-transparent'
       }`}
     >
       <Container className="flex items-center justify-between h-16 md:h-20 gap-2">
-        <Link to="/" data-cursor="hover" className="flex items-center gap-2 min-w-0 shrink">
-          <img src={logoMark} alt="Vortexa Labs" className="w-7 h-7 md:w-8 md:h-8 rounded-full shrink-0" />
+        {/* Logo */}
+        <Link
+          to="/"
+          data-cursor="hover"
+          className="flex items-center gap-2 min-w-0 shrink"
+        >
+          <img
+            src={logoMark}
+            alt="Vortexa Labs"
+            className="w-7 h-7 md:w-8 md:h-8 rounded-full shrink-0"
+          />
           <span className="font-heading font-semibold text-sm md:text-base text-ink tracking-tight truncate">
             Vortexa Labs
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-10 shrink-0">
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center gap-8 shrink-0">
           {navLinks.map((l) => (
-            <NavLink key={l.to} to={l.to} className={linkClass} data-cursor="hover">
+            <NavLink
+              key={l.to}
+              to={l.to}
+              end={l.to === '/'}
+              className={linkClass}
+              data-cursor="hover"
+            >
               {l.name}
             </NavLink>
           ))}
         </nav>
 
+        {/* Right side */}
         <div className="flex items-center gap-2 shrink-0">
           <Link
             to="/quotation"
@@ -68,6 +91,7 @@ export default function Navbar() {
         </div>
       </Container>
 
+      {/* Mobile drawer */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -78,23 +102,28 @@ export default function Navbar() {
             className="md:hidden bg-bg border-t border-line overflow-hidden"
           >
             <Container className="flex flex-col py-4">
-              {navLinks.map((l) => (
+              {navLinks.map((l, i) => (
                 <NavLink
                   key={l.to}
                   to={l.to}
+                  end={l.to === '/'}
                   onClick={() => setMobileOpen(false)}
-                  className="text-ink-muted hover:text-ink text-base py-3.5 border-b border-line last:border-b-0"
+                  className={({ isActive }) =>
+                    `text-base py-3.5 transition-colors duration-300 ${
+                      i < navLinks.length - 1 ? 'border-b border-line' : ''
+                    } ${isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'}`
+                  }
                 >
                   {l.name}
                 </NavLink>
               ))}
-              <NavLink
-                to="/contact"
+              <Link
+                to="/quotation"
                 onClick={() => setMobileOpen(false)}
-                className="text-ink-muted hover:text-ink text-base py-3.5"
+                className="mt-4 w-full inline-flex items-center justify-center rounded-lg font-semibold bg-ink text-bg hover:bg-white transition-colors duration-300 px-5 py-3 text-sm"
               >
-                Contact
-              </NavLink>
+                Get a quote
+              </Link>
             </Container>
           </motion.div>
         )}
